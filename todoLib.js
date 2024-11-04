@@ -1,103 +1,87 @@
-// The data model for a to-do item is as follows
+// The data model for a todo is as follows
 /*
 {
     "task": "Buy groceries",
     "completed": false,
     "dueDate": "2024-08-30"
-}
+};
 */
 
-let todoArray = [];
-
+let todosArray = [];
 let nextId = 1;
 
-function getAll() {
-  return todoArray;
+function addOne(task, completed, dueDate) {
+    if (!task || typeof completed !== "boolean" || !dueDate) {
+        return false;
+    }
+
+    const newTodo = {
+        id: nextId++,
+        task,
+        completed,
+        dueDate
+    };
+
+    todosArray.push(newTodo);
+    return newTodo;
 }
 
-function addOne(task, completed, dueDate) {
-  // Check if any parameter is empty or undefined
-  if (!task || completed === undefined || !dueDate) {
-    return false;
-  }
-
-  const newTodo = {
-    id: nextId++,
-    task,
-    completed,
-    dueDate,
-  };
-
-  todoArray.push(newTodo);
-  return newTodo;
+function getAll() {
+    return todosArray;
 }
 
 function findById(id) {
-  const numericId = Number(id);
-  const todo = todoArray.find((item) => item.id === numericId);
-  if (todo) {
-    return todo;
-  } else {
-    return false;
-  }
+    const numericId = Number(id);
+    const toDo = todosArray.find(item => item.id === numericId);
+    return toDo || false;
 }
 
 function updateOneById(id, updatedData) {
-  const todo = findById(id);
-  if (todo) {
-    // Update properties only if provided in updatedData
-    if (updatedData.task) {
-      todo.task = updatedData.task;
+    const item = findById(id);
+    if (item) {
+        if (updatedData.task) item.task = updatedData.task;
+        if (updatedData.completed) item.completed = updatedData.completed;
+        if (updatedData.dueDate) item.dueDate = updatedData.dueDate;
+        return item;
     }
-    if (updatedData.completed !== undefined) {
-      todo.completed = updatedData.completed;
-    }
-    if (updatedData.dueDate) {
-      todo.dueDate = updatedData.dueDate;
-    }
-    return todo;
-  }
-  return false;
+    return false;
 }
 
 function deleteOneById(id) {
-  const todo = findById(id);
-  if (todo) {
-    const initialLength = todoArray.length;
-    todoArray = todoArray.filter((todo) => todo.id !== Number(id));
-    return todoArray.length < initialLength; // Indicate successful deletion if the length has decreased
-  }
-  return false; // Return false if the item was not found
+    const numericId = Number(id);
+    const car = findById(id);
+    if (car) {
+        const initialLength = todosArray.length;
+        todosArray = todosArray.filter(item => item.id !== numericId);
+        return todosArray.length < initialLength;
+    }
+    return false;    
 }
 
 if (require.main === module) {
-  // Add to-do item
-  let result = addOne("Buy groceries", false, "2024-08-30");
-  console.log(result);
-  // Add another to-do item
-  result = addOne("Clean the house", true, "2024-08-31");
-  console.log(result);
+    let result = addOne("Do dishes", false, "2024-11-04");
+    console.log(result);
 
-  console.log("getAll called:", getAll());
+    result = addOne("Take out the trash", true, "2024-11-03");
+    console.log(result);
 
-  console.log("findById called:", findById(1));
+    console.log("getAll called:", getAll());
 
-  console.log(
-    "updateOneById called:",
-    updateOneById(1, { completed: true, dueDate: "2024-09-01" })
-  );
-  console.log("findById called after item updated:", findById(1));
+    console.log("findById called:", findById(1));
 
-  console.log("deleteOneById called:", deleteOneById(1));
-  console.log("findById called after item deleted:", findById(1));
+    console.log("updateOneById called:", updateOneById(1, { completed: true}));
+    console.log("findById called after item updated:", findById(1));
+
+    console.log("deleteOneById called:", deleteOneById(1));
+    console.log("findByID called after item deleted:", findById(1));
 }
 
-ToDo = {
-  getAll,
-  addOne,
-  findById,
-  updateOneById,
-  deleteOneById,
+const ToDos = {
+    getAll,
+    addOne,
+    findById,
+    updateOneById,
+    deleteOneById
 };
 
-module.exports = ToDo;
+module.exports = ToDos;
